@@ -2,10 +2,12 @@ package br.com.machado.marcos.desafio.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.ArrayUtils;
 
 import br.com.machado.marcos.desafio.domain.request.SequenceRequest;
 import br.com.machado.marcos.desafio.domain.response.SequenceResponse;
@@ -20,16 +22,40 @@ public class SequenceService {
 
 
     private boolean validateSequence(SequenceRequest request) {
-        int totalHorizontalSequenceValid = findSequence(request.getLetters());
-        int totalVerticalSequenceValid = findSequence(getVerticalLetters(request.getLetters()));
-        int totalDiagonalSequenceValid = findSequence(getDiagonalLetters(request.getLetters()));
+        int totalHorizontalSequenceValid= findSequence(request.getLetters());
+        int totalVerticalSequenceValid  = findSequence(getVerticalLetters(request.getLetters()));
+        int totalDiagonal1SequenceValid = findSequence(getDiagonalLetters(request.getLetters()));
+        int totalDiagonal2SequenceValid = findSequence(getDiagonalLetters(getVerticalLettersReverse(request.getLetters())));
 
-        this.getVerticalLetters(request.getLetters());
-
-        return (totalHorizontalSequenceValid + totalVerticalSequenceValid + totalDiagonalSequenceValid) > 1;
+        return (totalHorizontalSequenceValid + totalVerticalSequenceValid + totalDiagonal1SequenceValid
+            + totalDiagonal2SequenceValid) > 1;
     }
 
-    public String[] getVerticalLetters(String[] arrLetters) {
+
+
+
+
+
+    private String[] getVerticalLettersReverse(String[] arrLetters) {
+        String[] verticalLetters = getVerticalLetters(arrLetters);
+        List<String> lstLetters = new ArrayList<>();
+        Arrays.asList(verticalLetters).forEach(letters -> {
+            lstLetters.add(this.reverse(letters));
+        });
+        return lstLetters.toArray(new String[0]);
+    }
+
+    private String reverse(String letters) {
+        String input = letters;
+        StringBuilder input1 = new StringBuilder();
+        input1.append(input);
+        input1.reverse();
+        return input1.toString();
+    }
+
+
+
+    private String[] getVerticalLetters(String[] arrLetters) {
         int line = 0;
         int col = 0;
         int totalColumns = arrLetters.length;
@@ -48,46 +74,33 @@ public class SequenceService {
             col++;
             line++;
         }
+
+        System.out.println(lstLetters);
+
         return lstLetters.toArray(new String[0]);
     }
 
 
     public String[] getDiagonalLetters(String[] arrLetters) {
-        int line = 0;
-        int col = 0;
+
+        int totalLines = arrLetters.length;
         int totalColumns = arrLetters.length;
         List<String> lstLetters = new ArrayList<>();
         for (int i=0; i < (totalColumns * 2)-1; i++) {
             lstLetters.add("");
         }
 
-        for (int i=0; i < totalColumns; i++) {
-
-            for (int j=0; j < totalColumns; j++) {
-                if (i == j) {
-                    char letter = arrLetters[i].charAt(j);
-                    String sequence = lstLetters.get(5) + String.valueOf(letter);
-                    lstLetters.set(5, sequence);
-
-                    System.out.println(lstLetters);
-                }
-
-                for (int colDiagonal = 1; colDiagonal < totalColumns; colDiagonal++) {
-                    if (i + colDiagonal == j) {
-                        char letter = arrLetters[i].charAt(j);
-                        String sequence = lstLetters.get(j - i - 1) + String.valueOf(letter);
-                        lstLetters.set(j - i - 1, sequence);
-
-                        System.out.println(lstLetters);
-                    }
-                }
-
+        for (int line=0; line < totalLines; line++) {
+            for (int col=0; col < totalColumns; col++) {
+                char letter = arrLetters[line].charAt(col);
+                String sequence = lstLetters.get(col - line + 5) + String.valueOf(letter);
+                lstLetters.set(col - line + 5, sequence);
             }
         }
-
+        System.out.println(lstLetters);
         return lstLetters.stream().filter(s -> s.length()>=4).collect(Collectors.toList()).toArray(new String[0]);
-
     }
+
 
 
 
@@ -106,11 +119,14 @@ public class SequenceService {
                 } else {
                     if (index+1 < letters.length()) {
                         referenceLetter = letters.charAt(index + 1);
+                        if (totalEqualsLetters < 3) {
+                            totalEqualsLetters = 0;
+                        }
                     }
                 }
                 index++;
             }
-            if (totalEqualsLetters>=3) {
+            if (totalEqualsLetters >= 3) {
                 totalSequence++;
             }
         }
