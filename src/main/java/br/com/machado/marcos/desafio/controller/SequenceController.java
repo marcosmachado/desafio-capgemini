@@ -38,7 +38,7 @@ public class SequenceController {
       try {
          return ResponseEntity.status(HttpStatus.OK).body(this.sequenceService.sequence(request));
       } catch (SequenceException e) {
-         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
       }
 
    }
