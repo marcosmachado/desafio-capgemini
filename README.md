@@ -16,7 +16,7 @@ Este microserviço provê uma API para dentificar se uma sequência de letras é
 
 ### Banco de dados
 - Baixar uma imagem do mongodb para docker no link https://hub.docker.com/_/mongo
-- Iniciar o container do mongodb no docker
+
 
 
 
