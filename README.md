@@ -22,5 +22,3 @@ Este microserviço provê uma API para dentificar se uma sequência de letras é
 
 
 
-
-
